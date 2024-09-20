@@ -1,6 +1,6 @@
-package com.moiveflix.repositories;
+package com.movieflix.repositories;
 
-import com.moiveflix.entities.Movie;
+import com.movieflix.entities.Movie;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MovieRepository extends JpaRepository<Movie, Integer> {
