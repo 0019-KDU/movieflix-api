@@ -1,16 +1,13 @@
 version: 0.2
 
-env:
-  variables:
-    DATABASE_URL: "jdbc:mysql://localhost:3306/movies"  # Update to your RDS endpoint
-    DATABASE_USERNAME: "root"  # Consider using Secrets Manager
-    DATABASE_PASSWORD: "12345dev"  # Consider using Secrets Manager
 
 phases:
   pre_build:
     commands:
       - echo "Installing dependencies and building the project..."
       - mvn clean install
+      - echo "Starting MySQL container..."
+      - docker run --name mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=moives -p 3306:3306 -d mysql:latest
       - echo "Logging in to Amazon ECR..."
       - aws --version
       - REPOSITORY_URI=423623837471.dkr.ecr.eu-north-1.amazonaws.com/movie-api
