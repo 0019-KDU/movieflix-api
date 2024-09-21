@@ -56,17 +56,4 @@ public class MovieController {
         return objectMapper.readValue(movieDtoObj, MovieDto.class);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

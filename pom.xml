@@ -75,6 +75,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>movieApi</finalName>
 	</build>
 
 </project>
