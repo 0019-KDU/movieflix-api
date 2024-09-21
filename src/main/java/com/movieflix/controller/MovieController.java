@@ -3,7 +3,6 @@ package com.movieflix.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.movieflix.dto.MovieDto;
-import com.movieflix.exceptions.EmptyFileException;
 import com.movieflix.exceptions.FileExistsException;
 import com.movieflix.service.MovieService;
 import org.springframework.http.HttpStatus;
