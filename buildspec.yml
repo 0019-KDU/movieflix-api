@@ -1,13 +1,12 @@
 version: 0.2
 
-
 phases:
   pre_build:
     commands:
       - echo "Installing dependencies and building the project..."
       - mvn clean install
-      - echo "Starting MySQL container..."
-      - docker run --name mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=moives -p 3306:3306 -d mysql:latest
+      - echo "Starting Docker Compose services..."
+      - docker-compose --version  # Verifies Docker Compose is installed
       - echo "Logging in to Amazon ECR..."
       - aws --version
       - REPOSITORY_URI=423623837471.dkr.ecr.eu-north-1.amazonaws.com/movie-api
@@ -18,14 +17,15 @@ phases:
   build:
     commands:
       - echo "Build started on $(date)"
-      - echo "Building the Docker image..."
-      - docker build -t $REPOSITORY_URI:latest .
-      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+      - echo "Building the Docker image using Docker Compose..."
+      - docker-compose build  # Use Docker Compose to build the image
+      - docker tag movie-api:latest $REPOSITORY_URI:latest
+      - docker tag movie-api:latest $REPOSITORY_URI:$IMAGE_TAG
 
   post_build:
     commands:
       - echo "Build completed on $(date)"
-      - echo "Pushing the Docker images..."
+      - echo "Pushing the Docker images to ECR..."
       - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo "Writing image definitions file..."
