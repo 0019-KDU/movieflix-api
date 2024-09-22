@@ -8,5 +8,5 @@ ENV DB_PASSWORD=${DB_PASSWORD}
 ENV DB_URL=${DB_URL}
 
 COPY target/movieApi.jar movieApi.jar
-
+EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "/movieApi.jar"]
