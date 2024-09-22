@@ -5,8 +5,11 @@ import com.movieflix.entities.Movie;
 import com.movieflix.exceptions.FileExistsException;
 import com.movieflix.exceptions.MovieNotFoundException;
 import com.movieflix.repositories.MovieRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -19,7 +22,7 @@ import java.util.List;
 
 @Service
 public class MovieServiceImpl implements MovieService {
-
+    private static final Logger logger = LoggerFactory.getLogger(MovieServiceImpl.class);
     private final MovieRepository movieRepository;
 
     private final FileService fileService;
@@ -169,18 +172,26 @@ public class MovieServiceImpl implements MovieService {
         return response;
     }
 
+    @Transactional
     @Override
     public String deleteMovie(Integer movieId) throws IOException {
-        //1.check if movie object exists in DB
-        Movie mv=movieRepository.findById(movieId).orElseThrow(()->new MovieNotFoundException("Movie not found with id: "+movieId));
-        Integer id=mv.getMovieId();
+        // 1. Check if the movie exists in the DB
+        Movie mv = movieRepository.findById(movieId)
+                .orElseThrow(() -> new MovieNotFoundException("Movie not found with id: " + movieId));
 
-        //2.delete the file associated with this object
-        Files.deleteIfExists(Paths.get(path+File.separator+mv.getPoster()));
+        // 2. Try to delete the file associated with this movie
+        try {
+            Files.deleteIfExists(Paths.get(path, mv.getPoster()));
+            logger.info("Deleted poster file for movie: " + movieId);
+        } catch (IOException e) {
+            logger.error("Error deleting poster file for movie with id: " + movieId, e);
+        }
 
-        //3.delete the movie object
+        // 3. Delete the movie object from the DB
         movieRepository.delete(mv);
-        return "Movie deleted with id: "+movieId;
+        logger.info("Deleted movie from DB with id: " + movieId);
+
+        return "Movie deleted with id: " + movieId;
     }
 }
 
